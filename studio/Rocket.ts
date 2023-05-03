@@ -1,6 +1,6 @@
-import { Cargo } from "./Cargo";
-import { Astronaut } from "./Astronaut";
-import { Payload } from "./Payload";
+import { Cargo } from './Cargo';
+import { Astronaut } from './Astronaut';
+import { Payload } from './Payload';
 
 export class Rocket {
   name: string;
@@ -9,50 +9,41 @@ export class Rocket {
   astronauts: Astronaut[] = [];
 
   constructor(name: string, totalCapacityKg: number) {
-    this.name = name;;
+    this.name = name;
     this.totalCapacityKg = totalCapacityKg;
-  }
-
-  sumMass(items: Payload[]): number {
-    let sum: number = 0;
-    for (let i = 0; i < items.length; i++) {
-      sum += items[i].massKg;
-    }
-    return sum;
-  }
-
-  currentMassKg(): number {
-    let astronautMass = this.sumMass(this.astronauts);
-    let cargomass = this.sumMass(this.cargoItems);
-
-    return astronautMass + cargomass;
-  }
-
-  canAdd(item: Payload): boolean {
-    // if (this.currentMassKg() + item.massKg <= this.totalCapacityKg) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-    // console.log(`current mass: ${this.currentMassKg()}\nitem mass: ${item.massKg}\ntotal capacity: ${this.totalCapacityKg}`)
-    return (this.currentMassKg() + item.massKg) <= this.totalCapacityKg
-  }
-
-  addCargo(cargo: Cargo): boolean {
-    if (this.canAdd(cargo)) {
-      this.cargoItems.push(cargo)
-      return true;
-    } else {
-      return false
-    }
   }
 
   addAstronaut(astronaut: Astronaut): boolean {
     if (this.canAdd(astronaut)) {
       this.astronauts.push(astronaut);
       return true;
-    } else {
-      return false;
     }
+    return false;
+  }
+
+  addCargo(cargo: Cargo): boolean {
+    if (this.canAdd(cargo)) {
+      this.cargoItems.push(cargo);
+      return true;
+    }
+    return false;
+  }
+
+  canAdd(item: Payload): boolean {
+    return this.currentMassKg() + item.massKg <= this.totalCapacityKg;
+  }
+
+  currentMassKg(): number {
+    let cargoItemsTotalWeight = this.sumMass(this.cargoItems);
+    let astronautItemsTotalWeight = this.sumMass(this.astronauts);
+    return cargoItemsTotalWeight + astronautItemsTotalWeight;
+  }
+
+  sumMass(items: Payload[]): number {
+    let totalWeight: number = 0;
+    for (let i = 0; i < items.length; i++) {
+      totalWeight += items[i].massKg;
+    }
+    return totalWeight;
   }
 }
